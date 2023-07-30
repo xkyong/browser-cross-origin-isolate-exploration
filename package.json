@@ -1,0 +1,23 @@
+{
+  "name": "browser-cross-origin-isolate-exploration",
+  "version": "1.0.0",
+  "description": "a repository for browser cross origin isolate exploration",
+  "author": "xiekaiyong",
+  "scripts": {
+    "serverA": "nodemon ./src/server-a/main.js",
+    "serverB": "nodemon ./src/server-b/main.js"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "dependencies": {
+    "koa": "^2.14.1",
+    "koa-bodyparser": "^4.3.0",
+    "koa-router": "^12.0.0",
+    "koa-static": "^5.0.0"
+  },
+  "devDependencies": {
+    "consola": "^2.15.3",
+    "koa-logger": "^3.2.1",
+    "nodemon": "^2.0.20"
+  }
+}

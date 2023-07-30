@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>server-a</title>
+  <script src="http://127.0.0.1:3000/coi/assets/vconsole.min.js"></script>
+  <!-- 如果项目中启用了 跨域隔离，项目中的跨域脚本请求可以通过添加 crossorigin 属性解决请求失败问题，前提是该资源响应头设置了CORS -->
+  <!-- <script src="http://127.0.0.1:3000/coi/assets/vconsole.min.js" crossorigin></script> -->
+  <style>
+    .avatar {
+      width: 300px;
+      height: 200px;
+    }
+  </style>
+</head>
+<body>
+  <h2>browser-cross-origin-isolate-exploration</h2>
+  <p class="get-hello-api-content"></p>
+  <p class="post-hello-api-content"></p>
+  <div><img class="avatar" src="http://127.0.0.1:3000/coi/assets/avatar.jpg" alt="头像"></div>
+  <iframe width="300" height="200" src="http://127.0.0.1:3000/" frameborder="0"></iframe>
+  <!-- <img class="avatar" src="http://127.0.0.1:3000/coi/assets/avatar.jpg" alt="头像" crossorigin> -->
+
+  <script>
+    const gHelloEl = document.querySelector('.get-hello-api-content')
+    const pHelloEl = document.querySelector('.post-hello-api-content')
+
+    async function showGetHelloContent () {
+      const { data } = await getData('http://127.0.0.1:3000/coi/hello', { name: 'kai', age: 23 })
+      gHelloEl.textContent = `[get]: ${data}`
+    }
+
+    async function showPostHelloContent () {  
+      const { data } = await postData('http://127.0.0.1:3000/coi/hello-post', { name: 'james', age: 56 })
+      pHelloEl.textContent = `[post]: ${data}`
+    }
+
+    Promise.all([
+      showGetHelloContent(),
+      showPostHelloContent()
+    ])
+    
+    // 启动 vconsole
+    new window.VConsole()
+
+    async function getData (url, query = {}) {
+      if (query && Object.keys(query).length > 0) {
+        const queryList = []
+        Object.keys(query).forEach(key => {
+          queryList.push(`${key}=${encodeURIComponent(query[key])}`)
+        })
+
+        if (url.indexOf('?') !== -1) {
+          url = url + '&' + queryList.join('&')
+        } else {
+          url = url + '?' + queryList.join('&')
+        }
+      }
+
+      const res = await fetch(url)
+      return res.json()
+    }
+
+    async function postData (url, data) {
+      const res = await fetch(url, {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        mode: 'cors', // no-cors, *cors, same-origin
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        },
+        redirect: 'follow', // manual, *follow, error
+        referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        body: JSON.stringify(data) // body data type must match "Content-Type" header
+      })
+
+      return res.json()
+    }
+  </script>
+</body>
+</html>
